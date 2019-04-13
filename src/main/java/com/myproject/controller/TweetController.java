@@ -15,7 +15,6 @@ import com.myproject.resources.EmployeeResource;
 import com.myproject.resources.FollowerResource;
 import com.myproject.resources.TweetResource;
 import com.myproject.service.EmployeeService;
-import com.myproject.service.TweetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,10 +69,11 @@ public class TweetController {
 
     @RequestMapping(value = "/{tweetId}", method = RequestMethod.PATCH)
     @ResponseBody
-    public ResponseEntity<Void> updateTweet(@PathVariable Long tweetId, @RequestBody String modifiedTweet) {
+    public ResponseEntity<Void> updateTweet(@PathVariable Long tweetId, @RequestBody Tweet modifiedTweet) {
         Preconditions.checkNotNull(tweetId, "Tweet Id can not be null");
         Tweet tweet = tweetRepository.findOne(tweetId);
-        tweet.setEntry(modifiedTweet);
+        tweet.setEntry(modifiedTweet.getEntry());
+        tweet.setHashtag(modifiedTweet.getHashtag());
         tweet.setLastModifiedAt(Timestamp.from(Instant.now()));
         tweetRepository.save(tweet);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -108,6 +108,6 @@ public class TweetController {
             tweetRepository.delete(tweet);
             return new ResponseEntity(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity("can not delete other user's tweet.", HttpStatus.FORBIDDEN);
     }
 }

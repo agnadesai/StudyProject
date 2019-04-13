@@ -14,32 +14,51 @@ public class EmployeeResource extends ResourceSupport {
 
     public static final String FOLLOW = "follow";
 
-    public static final String TWEET = "tweet";
+    public static final String TWEET = "addTweet";
 
     public static final String TWEETS = "viewTweets";
 
-    String name;
+    private final int numberOfFollowers;
 
-    List<String> tweets = new ArrayList<>();
+    private final int numberOfTweets;
+
+    private String firstName;
+
+    private final String lastName;
+
+    private final String username;
+
+    private List<String> tweets = new ArrayList<>();
 
     public EmployeeResource(Employee employee) {
-        this.name = employee.getFirstName();
-        employee.getTweetList().forEach(t-> this.addTweet(t.getEntry()));
+        this.firstName = employee.getFirstName();
+        this.lastName = employee.getLastName();
+        this.username = employee.getUsername();
+        this.numberOfFollowers = employee.getFollowers().size();
+        this.numberOfTweets = employee.getTweetList().size();
         this.add(linkTo(methodOn(EmployeeController.class).getEmployee(employee.getId())).withSelfRel());
-        this.add(linkTo(methodOn(EmployeeController.class).addFollowers(employee.getId(),null)).withRel(FOLLOW));
-        this.add(linkTo(methodOn(EmployeeController.class).addTweet(employee.getId(),null)).withRel(TWEET));
+        this.add(linkTo(methodOn(EmployeeController.class).addFollowers(employee.getId(), null)).withRel(FOLLOW));
+        this.add(linkTo(methodOn(EmployeeController.class).addTweet(employee.getId(), null)).withRel(TWEET));
         this.add(linkTo(methodOn(EmployeeController.class).getTweets(employee.getId())).withRel(TWEETS));
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public List<String> getTweets() {
-        return tweets;
+    public String getLastName() {
+        return lastName;
     }
 
-    private void addTweet(String tweet) {
-        tweets.add(tweet);
+    public String getUsername() {
+        return username;
+    }
+
+    public int getNumberOfFollowers() {
+        return numberOfFollowers;
+    }
+
+    public int getNumberOfTweets() {
+        return numberOfTweets;
     }
 }

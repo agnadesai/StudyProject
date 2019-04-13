@@ -41,8 +41,7 @@ public class OAuth2Configuration {
         @Override
         public void configure(HttpSecurity http) throws Exception {
 
-            http
-                    .exceptionHandling()
+            http.exceptionHandling()
                     .authenticationEntryPoint(customAuthenticationEntryPoint)
                     .and()
                     .logout()
@@ -94,8 +93,7 @@ public class OAuth2Configuration {
         private AuthenticationManager authenticationManager;
 
         @Override
-        public void configure(AuthorizationServerEndpointsConfigurer endpoints)
-                throws Exception {
+        public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
             endpoints
                     .tokenStore(tokenStore())
                     .authenticationManager(authenticationManager);

@@ -32,24 +32,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
-        auth
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-
-        web
-                .ignoring()
-                .antMatchers("/h2console/**")
-                .antMatchers("/api/register")
-                .antMatchers("/api/activate")
-                .antMatchers("/api/lostpassword")
-                .antMatchers("/api/resetpassword")
-                .antMatchers("/api/hello");
-
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/h2console/**");
     }
 
     @Override

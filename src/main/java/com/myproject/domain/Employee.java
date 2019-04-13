@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +15,7 @@ import javax.persistence.OneToMany;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "first_name")
@@ -29,10 +27,10 @@ public class Employee {
     @Column(name = "user_name")
     private String username;
 
-    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee")
     List<Tweet> tweetList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL,  fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "employee")
     Set<Follower> followers = new HashSet<>();
 
     private Employee() {

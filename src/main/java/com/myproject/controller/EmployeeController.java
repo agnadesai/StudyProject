@@ -81,6 +81,7 @@ public class EmployeeController {
         return new ResponseEntity<>(followerResourceSet, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Void> createEmployee(@RequestBody Employee newEmployee) {
@@ -102,6 +103,16 @@ public class EmployeeController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/{employeeId}/tweet/{tweetId}", method = RequestMethod.PATCH)
+    @ResponseBody
+    public ResponseEntity<Void> updateTweet(@PathVariable Long employeeId, @PathVariable Long tweetId, @RequestBody Tweet modifiedTweet) {
+        Tweet tweet = tweetRepository.findOne(tweetId);
+        tweet.setEntry(modifiedTweet.getEntry());
+        tweet.setHashtag(modifiedTweet.getHashtag());
+        tweetRepository.save(tweet);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/{employeeId}/tweet/{tweetId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<Void> deleteTweet(@PathVariable Long employeeId, @PathVariable Long tweetId) {
@@ -112,7 +123,7 @@ public class EmployeeController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Can not delete another user's tweet.", HttpStatus.FORBIDDEN);
         }
     }
 
@@ -123,12 +134,14 @@ public class EmployeeController {
         if (!following.isPresent()) {
             Employee employee = employeeRepository.findOne(employeeId);
             Employee follower = employeeRepository.findOne(followerId);
+            Preconditions.checkNotNull(employee, "Employee can not be null");
+            Preconditions.checkNotNull(follower, "Follower can not be null");
             Follower fl = new Follower(employee,follower);
             followerRepository.save(fl);
             return new ResponseEntity(HttpStatus.CREATED);
         }
         else {
-            return new ResponseEntity(HttpStatus.CONFLICT);
+            return new ResponseEntity("You have to follow someone only once.", HttpStatus.CONFLICT);
         }
     }
 
@@ -147,7 +160,7 @@ public class EmployeeController {
             }
         }
         else {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+            return new ResponseEntity("User can only delete own followers.", HttpStatus.FORBIDDEN);
         }
     }
 
